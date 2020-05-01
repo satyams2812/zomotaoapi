@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>   
+    <title>Zomato CloneApi</title>
+</head>
+<body>
+       
+    <div class="search">
+
+        <input type="text" class="search-field food" id="text-search" placeholder="Enter City Name"  >
+        <button class="search-btn" id = "searchbtn" type="button" onclick="search(); hide()"> Search</button>
+      
+    </div>
+
+      <script>
+     
+   
+    function search()
+    {
+        let output = '';
+     let v = document.getElementById('text-search').value;
+     
+     axios.get(`https://developers.zomato.com/api/v2.1/cities?q=${v}`,{
+            headers:{
+                'user-key': "e6159388b413a13df34fb4d0b7079fe4"
+            }
+             
+        })
+        .then(function(response){
+       //     console.log(response);
+           let k = response.data.location_suggestions[0].id;
+      //     console.log(response.data.location_suggestions[0].id);
+
+          axios.get(`https://developers.zomato.com/api/v2.1/collections?city_id=${k}`, {
+            headers:{
+                'user-key': "e6159388b413a13df34fb4d0b7079fe4"
+                  }
+            })
+
+        .then(function (response) {
+         
+            console.log(response.data);
+            let len = response.data.collections.length;
+            console.log(len);
+            for(var i=0;i<len;i++)
+      {
+        output+= ` 
+         <div class="flip-card" tabIndex="0">
+           <div class="flip-card-inner">
+             <div class="flip-card-front">
+               <img src="${response.data.collections[i].collection.image_url}" id="photos" class="card-img-top" style="width: 280px; height: 280px;" alt="..." >
+           </div>
+             <div class="flip-card-back">
+               <a href='${response.data.collections[i].collection.url}' >${response.data.collections[i].collection.description}</a>
+             </div>
+           </div>
+         </div>
+         `
+      }
+            document.getElementById('title').innerHTML += output;
+        })
+
+        .catch(function (error) {
+          console.log(error);
+         })
+
+         .then(function () {
+    // always executed
+  });
+
+        })
+        .catch(function (error) {
+          console.log(error);
+         })
+
+         .then(function () {
+
+  });
+
+    }
+//    document.getElementById('title').innerHTML += output;
+
+
+
+  function hide()
+  {
+    document.getElementById('title').innerHTML ="";
+
+  }
+  
+  
+
+</script>
+<section>
+    <div class="container">
+        <div class="row" id="title">
+          <div class="col-sm">
+           
+         
+            </div>
+          </div>
+          </div>
+
+</section>
+  
+
+    
+    
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
